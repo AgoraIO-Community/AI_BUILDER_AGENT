@@ -22,16 +22,18 @@ const runPrompt = async (query) => {
     console.log('\x1b[32m%s\x1b[0m', 'User prompt => ', query);
 
     let llmContext = '';
-    const { data, error } = await supabase.rpc('match_food', {
+    const { data, error } = await supabase.rpc('match_food_pdf', {
         query_embedding: vector,
         match_threshold: .40, // similarity threshold
         match_count: 1
     })
     console.log('\x1b[33m%s\x1b[0m', 'Matching Vectors => ', data);
 
-    const docs = await Promise.all(data.map(doc => fetchCustomData(doc.id)));
-    //const docs = await Promise.all(data.map(doc => fetchCustomDataPdf(doc.id)));
-    llmContext = docs.map(doc => doc.body).join(" ")
+    // const docs = await Promise.all(data.map(doc => fetchCustomData(doc.id)));
+    // llmContext = docs.map(doc => doc.body).join(" ")
+    const docs = await Promise.all(data.map(doc => fetchCustomDataPdf(doc.id)));
+    llmContext = docs
+
 
     //console.log('docs context', llmContext)
     // build prompt with RAG (mergwe with context)
@@ -46,5 +48,6 @@ const runPrompt = async (query) => {
 
 //runPrompt("Who founded Food on Wheels? ")
 // runPrompt("Did I ordered for Chole Bhature and when ?")
-runPrompt("Which is the most rated order?, can you tell the name of items ")
+//runPrompt("Which is the most rated order?, can you tell the name of items ")
 //runPrompt("can you help me decide what to order next ")
+runPrompt('What happens after I make a complaint about my order?');

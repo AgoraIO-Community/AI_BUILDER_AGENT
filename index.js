@@ -9,23 +9,27 @@ import { fetchCustomData, fetchCustomDataPdf } from './getData.js';
 // User Prompt --> Create Emebedding (model:text-embedding-3-small) --> match embedding in DB --> Out of relevant results prepare the prompt to LLM --> Get Final Answer
 
 const createEmbeddings = async (slug) => {
-    const data = await fetchCustomData(slug);
-    // const data = await fetchCustomDataPdf(slug);
-
-    // console.log('slug info', data)
-
     // generate  vectors for content
-    const vector = await generateEmbedding(data.body)
-    console.log(vector)
+    // const data = await fetchCustomData(slug);
+    // const vector = await generateEmbedding(data.body)
+    const data = await fetchCustomDataPdf(slug);
+    const vector = await generateEmbedding(data)
+    //console.log(extractTitle(data));
 
+    // title and url should cn be  extracted based on content
     const { error } = await supabase
-        .from('food') // supabase db table
+        .from('food_pdf') // supabase db table
         .insert([
-            { id: slug, title: data.attributes.title, url: slug, vector },
+            { id: slug, vector },
         ])
         .select()
     console.log(error)
 
+}
+
+function extractTitle(text) {
+    const match = text.match(/^(.*?)(?=:)/);
+    return match ? match[0].trim() : null;
 }
 
 const initApp = async () => {

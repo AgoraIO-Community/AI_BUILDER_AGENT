@@ -6,6 +6,7 @@ import { PdfReader } from "pdfreader";
 
 
 
+
 //github-page : https://github.com/facebook/react-native-website/blob/main/docs/intro-react-native-components.md
 //public url:   https://reactnative.dev/docs/intro-react-native-components
 export const parseDocs = async (slug) => {
@@ -33,26 +34,32 @@ export const fetchCustomData = async (slug) => {
 };
 
 export const fetchCustomDataPdf = async (slug) => {
-
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const filePath = path.join(__dirname, 'food_delivery/pdf', `${slug}.pdf`);
-    console.log("file path", filePath)
-    try {
-        const fileBuffer = fs.readFile(filePath);
-        const reader = new PdfReader();
-        reader.parseBuffer(fileBuffer, (err, item) => {
-            if (err) {
-                console.error("Error reading PDF: ", err);
-            } else if (!item) {
-                console.log("End of file.");
-            } else if (item.text) {
-                console.log(item.text);
-            }
-        });
+    // console.log("file path pdf", filePath);
 
+    try {
+        const fileBuffer = await fs.readFile(filePath);
+        const reader = new PdfReader();
+
+
+        return new Promise((resolve, reject) => {
+            let accumulatedText = "";
+
+            reader.parseBuffer(fileBuffer, (err, item) => {
+                if (err) {
+                    reject("Error reading PDF: " + err);
+                } else if (!item) {
+                    //console.log("End of file.");
+                    resolve(accumulatedText.replace(/[\u2022\u2023\u25E6\u2043\u2219\-•◦]/g, '').trim());
+                } else if (item.text) {
+                    accumulatedText += item.text + " ";
+                }
+            });
+        });
     } catch (error) {
         console.error('Error reading the PDF file:', error);
         return null;
     }
-}
+};
 
