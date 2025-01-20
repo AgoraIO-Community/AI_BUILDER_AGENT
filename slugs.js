@@ -1,0 +1,2 @@
+export const docsList = ['intro-react-native-components', 'intro-react', 'handling-text-input', 'using-a-scrollview', 'using-a-listview', 'debugging', 'performance']
+export const foodAppCategories = ['customers', 'faq', 'feedbacks', 'orders', 'payments']
