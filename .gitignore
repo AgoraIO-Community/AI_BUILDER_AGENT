@@ -76,3 +76,5 @@ template/customization/*
 .metro-health-check*
 # testing
 /coverage
+
+.env

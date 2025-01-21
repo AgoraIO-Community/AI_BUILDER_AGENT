@@ -17,9 +17,9 @@ const buildFullPrompt = (query, docsContext) => {
     return filled_prompt_template;
 };
 
-const runPrompt = async (query) => {
+export const runPrompt = async (query) => {
     const vector = await generateEmbedding(query)
-    console.log('\x1b[32m%s\x1b[0m', 'User prompt => ', query);
+    console.log('User prompt => ', query);
 
     let llmContext = '';
     const { data, error } = await supabase.rpc('match_food_pdf', {
@@ -27,7 +27,7 @@ const runPrompt = async (query) => {
         match_threshold: .40, // similarity threshold
         match_count: 1
     })
-    console.log('\x1b[33m%s\x1b[0m', 'Matching Vectors => ', data);
+    // console.log('\x1b[33m%s\x1b[0m', 'Matching Vectors => ', data);
 
     // const docs = await Promise.all(data.map(doc => fetchCustomData(doc.id)));
     // llmContext = docs.map(doc => doc.body).join(" ")
@@ -38,16 +38,18 @@ const runPrompt = async (query) => {
     //console.log('docs context', llmContext)
     // build prompt with RAG (mergwe with context)
     const filledPrompt = buildFullPrompt(query, llmContext);
-    console.log('\x1b[35m%s\x1b[0m', 'Prompt to LLM => ', filledPrompt);
+    // console.log('Prompt to LLM => ', filledPrompt);
     // pass above to LLM 
-    const answer = await completion(filledPrompt)
-    console.log('\x1b[32m%s\x1b[0m', 'Answer from llm => ', answer);  // Cyan color for text
+    const answer = await completion(filledPrompt);
+    console.log("Successfully fetched answer via LLM:", answer)
+    return answer
+    // console.log('\x1b[32m%s\x1b[0m', 'Answer from llm => ', answer);  
 
 
 }
 
 //runPrompt("Who founded Food on Wheels? ")
-// runPrompt("Did I ordered for Chole Bhature and when ?")
+//runPrompt("Did I ordered for Chole Bhature and when ?")
 //runPrompt("Which is the most rated order?, can you tell the name of items ")
 //runPrompt("can you help me decide what to order next ")
-runPrompt('What happens after I make a complaint about my order?');
+//runPrompt('What happens after I make a complaint about my order?');
