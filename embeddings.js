@@ -30,3 +30,17 @@ export const completion = async (prompt) => {
     return completion.choices[0].message.content
 
 }
+
+export const completionStream = async (prompt) => {
+    const stream = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+            { role: "user", content: prompt },
+        ],
+        stream: true, // enable streming of response
+        stream_options: { include_usage: true }, // shows stats for token usage in the stream
+        response_format: { type: 'text' }
+    });
+    return stream;
+
+}

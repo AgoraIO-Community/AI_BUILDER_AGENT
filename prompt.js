@@ -1,4 +1,4 @@
-import { completion, generateEmbedding } from "./embeddings.js"
+import { completion, generateEmbedding, completionStream } from "./embeddings.js"
 import { fetchCustomData, fetchCustomDataPdf } from "./getData.js";
 import supabase from "./supabase.js";
 
@@ -38,13 +38,40 @@ export const runPrompt = async (query) => {
     //console.log('docs context', llmContext)
     // build prompt with RAG (mergwe with context)
     const filledPrompt = buildFullPrompt(query, llmContext);
-    // console.log('Prompt to LLM => ', filledPrompt);
+    console.log('Prompt to LLM => ', filledPrompt);
     // pass above to LLM 
     const answer = await completion(filledPrompt);
     console.log("Successfully fetched answer via LLM:", answer)
-    return answer
     // console.log('\x1b[32m%s\x1b[0m', 'Answer from llm => ', answer);  
+    return answer
 
+}
+
+export const runPromptStream = async (query) => {
+    const vector = await generateEmbedding(query)
+    console.log('User prompt => ', query);
+
+    let llmContext = '';
+    const { data, error } = await supabase.rpc('match_food_pdf', {
+        query_embedding: vector,
+        match_threshold: .40, // similarity threshold
+        match_count: 1
+    })
+    // console.log('\x1b[33m%s\x1b[0m', 'Matching Vectors => ', data);
+
+    // const docs = await Promise.all(data.map(doc => fetchCustomData(doc.id)));
+    // llmContext = docs.map(doc => doc.body).join(" ")
+    const docs = await Promise.all(data?.map(doc => fetchCustomDataPdf(doc.id)));
+    llmContext = docs
+
+
+    //console.log('docs context', llmContext)
+    // build prompt with RAG (mergwe with context)
+    const filledPrompt = buildFullPrompt(query, llmContext);
+    console.log('Prompt to LLM => ', filledPrompt);
+    // pass above to LLM 
+
+    return completionStream(filledPrompt)
 
 }
 

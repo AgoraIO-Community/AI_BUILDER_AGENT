@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { runPrompt } from './prompt.js';
+import { runPrompt, runPromptStream } from './prompt.js';
 
 dotenv.config();
 
@@ -23,6 +23,33 @@ app.post('/mycustomagent/prompt', validateRequestData, async (req, res) => {
     } catch (error) {
         console.log('error', error)
         res.status(500).json({ error: 'Error processing your request' });
+    }
+});
+
+app.post('/mycustomagent/promptStream', async (req, res) => {
+    const { data } = req.body;
+    try {
+        const stream = await runPromptStream(data);
+
+        res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive'
+        });
+
+        // Process each chunk from the stream
+        for await (const chunk of stream.iterator()) {
+            res.write(`data: ${JSON.stringify(chunk)}\n\n`);
+        }
+
+        res.write('data: [DONE]\n\n');
+        res.end();
+
+    } catch (error) {
+        console.error('Error during streaming completion:', error);
+        if (!res.headersSent) {
+            res.status(500).send("Error processing your request");
+        }
     }
 });
 
