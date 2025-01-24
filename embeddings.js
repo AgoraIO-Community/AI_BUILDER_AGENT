@@ -35,9 +35,12 @@ export const getClarifiedQuestion = async (conversationContext) => {
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini",
-            prompt: `Given the following conversation, what is the user specifically asking about?\n\n${conversationContext}`,
+            messages: [
+                { role: "user", content: `Given the following conversation, what is the user specifically asking about?\n\n${conversationContext}` },
+            ],
         });
-        return response.data.choices[0].text.trim();
+        console.log('clarif res', response)
+        return response.choices[0].message.content.trim();
 
     } catch (error) {
         console.error("Failed to get clarification from OpenAI:", error);
