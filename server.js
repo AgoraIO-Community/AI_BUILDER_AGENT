@@ -29,19 +29,17 @@ app.post('/mycustomagent/prompt', validateRequestData, async (req, res) => {
 app.post('/mycustomagent/promptStream', async (req, res) => {
     const { messages } = req.body;
     console.log('req body to glue url:', req.body);
-    let userQuery = ''
+    const conversationContext = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
+    const clarifiedQuestion = await getClarifiedQuestion(conversationContext);
+
+    if (!clarifiedQuestion) {
+        res.status(500).json({ error: "Failed to clarify the user's query" });
+        return;
+    }
 
     try {
-        //const stream = await runPromptStream("Did I ordered for dosa ?");
-        const lastMessage = messages[messages.length - 1];
-        if (lastMessage.role === 'user') {
-            userQuery = lastMessage.content
-        } else {
-            userQuery = 'Did I order for dosa ?'
-        }
-        console.log("filtered msg", lastMessage);
-        console.log("user query", userQuery)
-        const stream = await runPromptStream(userQuery);
+        console.log("user query calrified:", clarifiedQuestion)
+        const stream = await runPromptStream(clarifiedQuestion);
 
         res.writeHead(200, {
             'Content-Type': 'text/event-stream',
