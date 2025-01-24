@@ -35,12 +35,12 @@ app.post('/mycustomagent/promptStream', async (req, res) => {
         //const stream = await runPromptStream("Did I ordered for dosa ?");
         const lastMessage = messages[messages.length - 1];
         if (lastMessage.role === 'user') {
-
             userQuery = lastMessage.content
         } else {
             userQuery = 'Did I order for dosa ?'
         }
-
+        console.log("filtered msg", lastMessage);
+        console.log("user query", userQuery)
         const stream = await runPromptStream(userQuery);
 
         res.writeHead(200, {

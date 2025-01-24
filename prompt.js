@@ -61,8 +61,11 @@ export const runPromptStream = async (query) => {
 
     // const docs = await Promise.all(data.map(doc => fetchCustomData(doc.id)));
     // llmContext = docs.map(doc => doc.body).join(" ")
-    const docs = await Promise.all(data?.map(doc => fetchCustomDataPdf(doc.id)));
-    llmContext = docs
+    if (data.length) {
+        llmContext = await Promise.all(data?.map(doc => fetchCustomDataPdf(doc.id)));
+    } else {
+        llmContext = "No Information Available, pls try again !"
+    }
 
 
     //console.log('docs context', llmContext)
