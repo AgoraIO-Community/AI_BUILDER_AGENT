@@ -28,11 +28,20 @@ app.post('/mycustomagent/prompt', validateRequestData, async (req, res) => {
 
 app.post('/mycustomagent/promptStream', async (req, res) => {
     const { messages } = req.body;
-    console.log('req body to glue url:', req.body)
+    console.log('req body to glue url:', req.body);
+    let userQuery = ''
 
     try {
         //const stream = await runPromptStream("Did I ordered for dosa ?");
-        const stream = await runPromptStream(messages);
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage.role === 'user') {
+
+            userQuery = lastMessage.content
+        } else {
+            userQuery = 'Did I order for dosa ?'
+        }
+
+        const stream = await runPromptStream(userQuery);
 
         res.writeHead(200, {
             'Content-Type': 'text/event-stream',
