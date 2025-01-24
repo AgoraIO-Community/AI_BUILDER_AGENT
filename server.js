@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { runPrompt, runPromptStream } from './prompt.js';
+import { getClarifiedQuestion } from "./embeddings.js"
 
 dotenv.config();
 
