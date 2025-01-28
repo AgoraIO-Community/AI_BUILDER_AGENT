@@ -1,64 +1,43 @@
-
-
-import { foodAppCategories } from "./slugs.js"
-import { generateEmbedding } from './embeddings.js';
+import { generateEmbedding } from './openai_services.js';
 import supabase from './supabase.js';
-import { fetchCustomData, fetchCustomDataPdf } from './getData.js';
+import { fetchCustomDataPdf } from './getData.js';
 
-// Retrive Custom Data --> Create Emebedding (model:text-embedding-3-small) --> store in VectorDB
-// User Prompt --> Create Emebedding (model:text-embedding-3-small) --> match embedding in DB --> Out of relevant results prepare the prompt to LLM --> Get Final Answer
+// Define the verticals for food delivery services
+const foodDeliveryVerticals = ['customers', 'faq', 'feedbacks', 'orders', 'payments', 'complaints']
+
+// Process Overview:
+// 1. Retrieve custom data from a PDF file.
+// 2. Generate embeddings using the model 'text-embedding-3-small'.
+// 3. Store the generated embeddings in the Supabase VectorDB.
+// 4. For user prompts, create embeddings and match them in the database to retrieve relevant results.
+// 5. Prepare the prompt for the LLM (Language Model) and obtain the final answer.
 
 const createEmbeddings = async (slug) => {
-    // generate  vectors for content
-    // const data = await fetchCustomData(slug);
-    // const vector = await generateEmbedding(data.body)
+    // Fetch custom data from the PDF file associated with the given slug
     const data = await fetchCustomDataPdf(slug);
+    // Generate embeddings for the fetched data
     const vector = await generateEmbedding(data)
-    //console.log(extractTitle(data));
 
-    // title and url should cn be  extracted based on content
+    // Insert the generated vector into the Supabase database
     const { error } = await supabase
-        .from('food_pdf') // supabase db table
+        .from('food') // Supabase database table for storing PDF embeddings
         .insert([
             { id: slug, vector },
         ])
         .select()
+    // Log any errors that occur during the insertion
     console.log(error)
 
 }
 
-function extractTitle(text) {
-    const match = text.match(/^(.*?)(?=:)/);
-    return match ? match[0].trim() : null;
+// Initialize the application by creating embeddings for all defined verticals
+const initApp = async () => {
+    await Promise.all(foodDeliveryVerticals.map(slug => createEmbeddings(slug)));
 }
 
-const initApp = async () => {
-    await Promise.all(foodAppCategories.map(slug => createEmbeddings(slug)));
-}
+// Start the application
 initApp()
 
-// Fetch Docs
-// const handleDocs = async () => {
-//     await Promise.all(docsList.map(slug => handleDoc(slug)));
-// }
-//handleDocs()
-// const handleDoc = async (slug) => {
-//     const data = await parseDocs(slug)
-//     // gen vector
-//     const vector = await generateEmbedding(data.body)
-//     console.log(vector)
-
-//     // store vecor with meta dta in vector db 
-
-//     const { error } = await supabase
-//         .from('docs')
-//         .insert([
-//             { id: slug, title: data.attributes.title, url: `https://reactnative.dev/docs/${slug}`, vector },
-//         ])
-//         .select()
-//     console.log(error)
-
-// }
 
 
 
