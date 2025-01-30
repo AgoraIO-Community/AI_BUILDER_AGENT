@@ -23,7 +23,7 @@ git clone https://github.com/bhupendra1011/custom-agent.git
 cd custom-agent
 ```
 
-### Step 2: Clone the Repository
+### Step 2: Install Dependencies
 
 ```bash
 npm install
@@ -47,19 +47,25 @@ cp .env.example .env
 
 Update these variables in your .env file:
 
-OPENAI_API_KEY: Your OpenAI API key.
-PORT: The port number on which your server will run.
-SUPABASE_PROJECT_URL: The URL of your Supabase project.
-SUPABASE_PROJECT_KEY: Your Supabase project key.
-SUPABASE_DB_FUNCTION_NAME: The name of the database function in Supabase that your application will use.
-SUPABASE_DB_TABLE: The name of the table where vectors of custom content are stored.
+- **OPENAI_API_KEY**: Your OpenAI API key.
+- **PORT**: The port number on which your server will run.
+- **SUPABASE_PROJECT_URL**: The URL of your Supabase project.
+- **SUPABASE_PROJECT_KEY**: Your Supabase project key.
+- **SUPABASE_DB_FUNCTION_NAME**: The name of the database function in Supabase that your application will use.
+- **SUPABASE_DB_TABLE**: The name of the table where vectors of custom content are stored.
 
 ### Step 6: Run the Application
+
+Before starting your server, it's important to populate your database with the necessary embeddings from your PDF data.
+
+```bash
+npm run process-embeddings
+```
 
 Run the server to start listening for incoming queries:
 
 ```bash
-node server.js
+npm run start
 ```
 
 ## Server Endpoints

@@ -17,12 +17,12 @@ dotenv.config();
  * @param {string} slug - The unique identifier for the PDF file to be read.
  * @returns {Promise<string|null>} The extracted text as a string or null if an error occurs.
  */
-const fetchCustomDataPdf = async (slug) => {
+export const fetchCustomDataPdf = async (slug) => {
     try {
         // Determine the directory of the current module
         const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
         // Build the file path for the PDF using the slug
-        const pdfFilePath = path.join(moduleDirectory, 'food_delivery/pdf', `${slug}.pdf`);
+        const pdfFilePath = path.join(moduleDirectory, 'assets/pdfs', `${slug}.pdf`);
 
         // Read the PDF file into a buffer
         const pdfBuffer = await fs.readFile(pdfFilePath);
@@ -186,7 +186,7 @@ export const runPromptStream = async (query) => {
 
 
 //runPrompt("Who founded Food on Wheels? ")
-//runPrompt("Did I ordered for Chole Bhature and when ?")
+runPrompt("Did I ordered for Chole Bhature and when ?")
 //runPrompt("Which is the most rated order?, can you tell the name of items ")
 //runPrompt("can you help me decide what to order next ")
 //runPrompt('What happens after I make a complaint about my order?');

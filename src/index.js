@@ -1,6 +1,6 @@
 import { generateEmbedding } from './openai_services.js';
-import supabase from './supabase.js';
-import { fetchCustomDataPdf } from './getData.js';
+import supabase from '../supabase.js';
+import { fetchCustomDataPdf } from '../prompt.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
