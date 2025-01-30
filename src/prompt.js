@@ -99,9 +99,7 @@ export const runPrompt = async (query) => {
         if (!queryEmbedding) {
             throw new Error('Failed to generate query embedding');
         }
-        console.log("env variable", process.env.SUPABASE_DB_FUNCTION_NAME)
-        console.log("env variable2", process.env.SUPABASE_PROJECT_URL)
-        console.log("env variable3", process.env.SUPABASE_PROJECT_KEY)
+
         // Fetch matching data from the database using the generated embedding
         const { data, error } = await supabase.rpc(process.env.SUPABASE_DB_FUNCTION_NAME, {
             query_embedding: queryEmbedding,
@@ -188,7 +186,7 @@ export const runPromptStream = async (query) => {
 
 
 //runPrompt("Who founded Food on Wheels? ")
-runPrompt("Did I ordered for Chole Bhature and when ?")
+//runPrompt("Did I ordered for Chole Bhature and when ?")
 //runPrompt("Which is the most rated order?, can you tell the name of items ")
 //runPrompt("can you help me decide what to order next ")
 //runPrompt('What happens after I make a complaint about my order?');
