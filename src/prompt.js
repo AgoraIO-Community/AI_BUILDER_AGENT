@@ -99,7 +99,9 @@ export const runPrompt = async (query) => {
         if (!queryEmbedding) {
             throw new Error('Failed to generate query embedding');
         }
-
+        console.log("env variable", process.env.SUPABASE_DB_FUNCTION_NAME)
+        console.log("env variable2", process.env.SUPABASE_PROJECT_URL)
+        console.log("env variable3", process.env.SUPABASE_PROJECT_KEY)
         // Fetch matching data from the database using the generated embedding
         const { data, error } = await supabase.rpc(process.env.SUPABASE_DB_FUNCTION_NAME, {
             query_embedding: queryEmbedding,
