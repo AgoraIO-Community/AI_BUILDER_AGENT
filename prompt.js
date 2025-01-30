@@ -4,7 +4,10 @@ import { fileURLToPath } from 'url';
 import { PdfReader } from "pdfreader";
 import { completion, generateEmbedding, completionStream } from "./openai_services.js"
 import supabase from "./supabase.js";
+import dotenv from 'dotenv';
 
+// Load environment variables
+dotenv.config();
 
 /**
  * Reads and extracts text from a specified PDF file located within a predefined directory.
@@ -98,7 +101,7 @@ export const runPrompt = async (query) => {
         }
 
         // Fetch matching data from the database using the generated embedding
-        const { data, error } = await supabase.rpc('fn_match_food', {
+        const { data, error } = await supabase.rpc(process.env.SUPABASE_DB_FUNCTION_NAME, {
             query_embedding: queryEmbedding,
             match_threshold: 0.40, // Set the similarity threshold for matching
             match_count: 1        // Number of matches to retrieve
