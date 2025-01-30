@@ -22,7 +22,7 @@ export const fetchCustomDataPdf = async (slug) => {
         // Determine the directory of the current module
         const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
         // Build the file path for the PDF using the slug
-        const pdfFilePath = path.join(moduleDirectory, 'assets/pdfs', `${slug}.pdf`);
+        const pdfFilePath = path.join(moduleDirectory, '../assets/pdfs', `${slug}.pdf`);
 
         // Read the PDF file into a buffer
         const pdfBuffer = await fs.readFile(pdfFilePath);
