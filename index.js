@@ -1,6 +1,8 @@
 import { generateEmbedding } from './openai_services.js';
 import supabase from './supabase.js';
 import { fetchCustomDataPdf } from './getData.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Define the verticals for food delivery services
 const foodDeliveryVerticals = ['customers', 'faq', 'feedbacks', 'orders', 'payments', 'complaints']
@@ -20,7 +22,7 @@ const createEmbeddings = async (slug) => {
 
     // Insert the generated vector into the Supabase database
     const { error } = await supabase
-        .from('food') // Supabase database table for storing PDF embeddings
+        .from(process.env.SUPABASE_DB_TABLE) // Supabase database table for storing PDF embeddings
         .insert([
             { id: slug, vector },
         ])
