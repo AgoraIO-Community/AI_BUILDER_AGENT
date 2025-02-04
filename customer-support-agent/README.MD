@@ -4,7 +4,6 @@ This directory contains the Customer Support Agent, part of the AI Builder Agent
 
 ## Overview
 
-- **Assets**: Contains shared resources such as PDFs and other static files that are used by both Node.js and Python versions of the agent.
 - **Node**: This folder contains the Node.js implementation of the customer support agent.
 - **Python**: This folder hosts the Python implementation of the customer support agent.
 
