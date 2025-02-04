@@ -78,3 +78,10 @@ template/customization/*
 /coverage
 
 .env
+
+# Ignore Python virtual environments:
+venv/
+
+# Ignore Python bytecode:
+__pycache__/
+*.pyc
