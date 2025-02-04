@@ -158,8 +158,8 @@ async def run_prompt_stream(query: str):
 
     
 # Example call to run_prompt
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    question = "Which was my last order?"
-    answer = loop.run_until_complete(run_prompt(question))
-    print("Answer:", answer)
+# if __name__ == "__main__":
+#     loop = asyncio.get_event_loop()
+#     question = "Which was my last order?"
+#     answer = loop.run_until_complete(run_prompt(question))
+#     print("Answer:", answer)
