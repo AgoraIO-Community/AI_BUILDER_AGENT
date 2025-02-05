@@ -63,7 +63,37 @@ Update these variables in your .env file:
 - **SUPABASE_DB_FUNCTION_NAME**: The name of the database function in Supabase that your application will use.
 - **SUPABASE_DB_TABLE**: The name of the table where vectors of custom content are stored.
 
-### Step 5: Run the Application
+### Step 5: Database Function
+
+This project uses a Supabase function to perform vector similarity searches to facilitate efficient querying of data based on embeddings. Here’s how to set up the necessary database function within your Supabase project:
+
+You need to create a SQL function in your Supabase project that will perform the similarity matching. The below function `fn_match_food` calculates the cosine similarity between a query vector and vectors stored in your database, returning the closest matches based on the provided threshold.
+
+Here's the definition of the function you need to add to your Supabase project:
+
+```sql
+CREATE OR REPLACE FUNCTION fn_match_food (
+  query_embedding VECTOR(1536),
+  match_threshold FLOAT,
+  match_count INT
+)
+RETURNS TABLE (
+  id TEXT,
+  similarity FLOAT
+)
+LANGUAGE SQL STABLE
+AS $$
+  SELECT
+    food.id,
+    1 - (food.vector <=> query_embedding) AS similarity
+  FROM food
+  WHERE 1 - (food.vector <=> query_embedding) > match_threshold
+  ORDER BY (food.vector <=> query_embedding) ASC
+  LIMIT match_count;
+$$;
+```
+
+### Step 6: Run the Application
 
 Before starting your server, it's important to populate your database with the necessary embeddings from your PDF data.
 
