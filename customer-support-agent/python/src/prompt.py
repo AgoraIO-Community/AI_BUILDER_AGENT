@@ -23,7 +23,7 @@ async def fetch_custom_data_pdf(slug: str) -> str | None:
         # Determine the directory of the current module
         module_directory = Path(__file__).resolve().parent
         # Build the file path for the PDF using the slug
-        pdf_file_path = module_directory / "../../assets/pdfs" / f"{slug}.pdf"
+        pdf_file_path = module_directory / "../assets/pdfs" / f"{slug}.pdf"
 
         # Read the PDF file
         with open(pdf_file_path, "rb") as pdf_file:
