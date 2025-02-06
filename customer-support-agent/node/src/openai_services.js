@@ -49,7 +49,7 @@ export const getClarifiedQuestion = async (conversationContext) => {
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini",
-            messages: [{ role: "user", content: `Given the following conversation, what is the user specifically asking about?\n\n${conversationContext}` }],
+            messages: [{ role: "user", content: `Given the following conversation, what is the user specifically asking about? Please infer the context from the last messages. \n\n${conversationContext}` }],
         });
         console.log('Clarification response:', response);
         return response.choices[0].message.content.trim();
