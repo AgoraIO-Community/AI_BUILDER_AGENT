@@ -110,14 +110,15 @@ export const runPrompt = async (query) => {
         if (error) {
             throw new Error('Database matching error: ' + error.message);
         }
-        if (!data || data.length === 0) {
-            throw new Error('No matching documents found');
-        }
+        // if (!data || data.length === 0) {
+        //     throw new Error('No matching documents found');
+        // }
 
         // Fetch PDF data based on the matched results
-        const documents = await Promise.all(data.map(doc => fetchCustomDataPdf(doc.id)));
+        let documents = await Promise.all(data.map(doc => fetchCustomDataPdf(doc.id)));
         if (!documents || documents.length === 0) {
-            throw new Error('Failed to fetch documents');
+            //throw new Error('Failed to fetch documents');
+            documents = "Welcome to Food on Wheels Customer Support! You can ask me about your recent orders, feedbacks, payments info, or fnq about the company. How can I assist you today?";
         }
 
         // Build the prompt with the retrieved document data
@@ -164,13 +165,16 @@ export const runPromptStream = async (query) => {
         if (error) {
             throw new Error('Database matching error: ' + error.message);
         }
+
+        let documentsContext = '';
         if (!data || data.length === 0) {
             console.log("No matching documents found. Using default context.");
-            return completionStream("No Information Available, please try again!");
+            documentsContext = "Welcome to Food on Wheels Customer Support! You can ask me about your recent orders, feedback, payments info, or FAQs about the company. How can I assist you today?";
+        } else {
+            // Fetch PDF data based on the matched results
+            documentsContext = await Promise.all(data.map(doc => fetchCustomDataPdf(doc.id)));
+            documentsContext = documentsContext.join(" ");
         }
-
-        // Fetch PDF data based on the matched results
-        const documentsContext = await Promise.all(data.map(doc => fetchCustomDataPdf(doc.id)));
 
         // Build the prompt with the retrieved document data
         const fullPrompt = buildFullPrompt(query, documentsContext);
@@ -183,6 +187,7 @@ export const runPromptStream = async (query) => {
         return completionStream("Error processing your request. Please try again.");
     }
 };
+
 
 
 //runPrompt("Who founded Food on Wheels? ")
