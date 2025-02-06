@@ -47,11 +47,17 @@ export const completion = async (prompt) => {
  */
 export const getClarifiedQuestion = async (conversationContext) => {
     try {
+
+        //const userContext = buildFullPrompt(` Please find out what is user's latest query or you can mention what user's conversation means by giving prefreces to last messages , it should be in one line`, conversationContext);
+        // const userContext = `Given the recent messages, what is the user's current intent or primary concern in their last message? Here is the conversation context:\n\n${conversationContext}`;
+        // const userContext = `Given the recent messages, what is the user's question or primary concern in their last message? Please provide the topic or subject of the query rather than the answer. Here is the conversation context:\n\n${conversationContext}`;
+        const userContext = `Given the recent messages, what is the user's primary concern or intent in their last message? Does it continue the discussion or indicate an end to the conversation , summarize it one line ? Here is the conversation context:\n\n${conversationContext}`;
+        console.log("user clarification context =>", userContext)
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini",
-            messages: [{ role: "user", content: `Given the following conversation, what is the user specifically asking about? Please infer the context from the last messages. \n\n${conversationContext}` }],
+            messages: [{ role: "user", content: userContext }]
         });
-        console.log('Clarification response:', response);
+        console.log('Clarification response: =>', response.choices[0].message.content);
         return response.choices[0].message.content.trim();
     } catch (error) {
         console.error("Failed to get clarification from OpenAI:", error);
