@@ -38,11 +38,11 @@ app.post('/mycustomagent/prompt', validateRequestData, async (req, res) => {
  * Endpoint to handle streaming responses based on clarified user queries.
  */
 app.post('/mycustomagent/promptStream', async (req, res) => {
-    const { messages } = req.body;
+    const { messages, max_token = 1024 } = req.body;
     console.log('Received request with body:', req.body);
     const conversationContext = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
 
-    const clarifiedQuestion = await getClarifiedQuestion(conversationContext);
+    const clarifiedQuestion = await getClarifiedQuestion(conversationContext, max_token);
     if (!clarifiedQuestion) {
         res.status(500).json({ error: "Failed to clarify the user's query" });
         return;
@@ -50,7 +50,7 @@ app.post('/mycustomagent/promptStream', async (req, res) => {
 
     try {
         console.log("User query clarified:", clarifiedQuestion);
-        const stream = await runPromptStream(clarifiedQuestion);
+        const stream = await runPromptStream(clarifiedQuestion, max_token);
 
         res.writeHead(200, {
             'Content-Type': 'text/event-stream',

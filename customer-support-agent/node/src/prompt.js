@@ -145,7 +145,7 @@ export const runPrompt = async (query) => {
  * @param {string} query - The user's input query.
  * @returns {Promise<Stream>} A stream of the language model's responses.
  */
-export const runPromptStream = async (query) => {
+export const runPromptStream = async (query, max_token = 1024) => {
     try {
         console.log('User prompt => ', query);
 
@@ -181,10 +181,10 @@ export const runPromptStream = async (query) => {
         console.log('Prompt to LLM => ', fullPrompt);
 
         // Return the completion stream from the language model
-        return completionStream(fullPrompt);
+        return completionStream(fullPrompt, max_token);
     } catch (error) {
         console.error('Error in runPromptStream:', error);
-        return completionStream("Error processing your request. Please try again.");
+        return completionStream("Error processing your request. Please try again.", max_token);
     }
 };
 

@@ -45,7 +45,7 @@ export const completion = async (prompt) => {
  * @param {string} conversationContext - The context of the conversation.
  * @return {Promise<string|null>} The clarified question or null if an error occurs.
  */
-export const getClarifiedQuestion = async (conversationContext) => {
+export const getClarifiedQuestion = async (conversationContext, max_token) => {
     try {
 
         //const userContext = buildFullPrompt(` Please find out what is user's latest query or you can mention what user's conversation means by giving prefreces to last messages , it should be in one line`, conversationContext);
@@ -55,7 +55,8 @@ export const getClarifiedQuestion = async (conversationContext) => {
         console.log("user clarification context =>", userContext)
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini",
-            messages: [{ role: "user", content: userContext }]
+            messages: [{ role: "user", content: userContext }],
+            max_tokens: max_token
         });
         console.log('Clarification response: =>', response.choices[0].message.content);
         return response.choices[0].message.content.trim();
@@ -71,9 +72,10 @@ export const getClarifiedQuestion = async (conversationContext) => {
  * @param {string} prompt - The prompt to be processed.
  * @return {Promise<Object>} A stream of responses from the chat model.
  */
-export const completionStream = async (prompt) => {
+export const completionStream = async (prompt, max_token) => {
     const stream = await openai.chat.completions.create({
         model: "gpt-4o-mini",
+        max_tokens: max_token,
         messages: [{ role: "user", content: prompt }],
         stream: true,
         stream_options: { include_usage: true },
