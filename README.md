@@ -5,6 +5,7 @@ Welcome to the AI Builder Agents repository, maintained by the AgoraIO Community
 ## Available Agents
 
 - **Customer Support Agent**: Automates customer queries and interactions, ideal for e-commerce and service providers.
+- **Meeting Summarizer Agent**: Summarizes the meeting details in the call.
 
 ## Getting Started
 
