@@ -56,22 +56,19 @@ app.post('/mycustomagent/meetingSummary', async (req, res) => {
 app.post('/mycustomagent/meetingSummaryStream', async (req, res) => {
     const { messages, max_token = 1024 } = req.body;
     console.log('Received stream request with body:', req.body);
-    const conversationContext = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
-    console.log("conversational context stream till history =>", conversationContext);
     // since max history is of 10  then we need to store the last conversation;
     const latestMsg = messages[messages.length - 1].content;
     const isSummaryAsked = latestMsg.includes("summary");
+    console.log('meeting history uptill now', msgHistoryStream.join(","));
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+    });
     if (isSummaryAsked) {
         try {
 
             const stream = await getMeetingHistoryStream(msgHistoryStream.join("\n"), max_token);
-
-            res.writeHead(200, {
-                'Content-Type': 'text/event-stream',
-                'Cache-Control': 'no-cache',
-                'Connection': 'keep-alive'
-            });
-
             for await (const chunk of stream.iterator()) {
                 res.write(`data: ${JSON.stringify(chunk)}\n\n`);
             }
@@ -86,7 +83,8 @@ app.post('/mycustomagent/meetingSummaryStream', async (req, res) => {
 
     } else {
         msgHistoryStream.push(latestMsg);
-        res.status(200).json({ message: "messge stored in history" });
+        res.write('data: {"message": "Message stored in history"}\n\n');
+        res.end('data: [DONE]\n\n');
     }
 
 });
