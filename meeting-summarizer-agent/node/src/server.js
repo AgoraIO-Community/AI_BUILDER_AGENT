@@ -35,9 +35,9 @@ app.post('/mycustomagent/meetingSummary', async (req, res) => {
     // since max history is of 10  then we need to store the last conversation;
     const latestMsg = messages[messages.length - 1].content;
     const isSummaryAsked = latestMsg.includes("summary");
+    console.log('meeting history uptill now', msgHistoryStream.join(","));
     if (isSummaryAsked) {
         try {
-
             const response = await getMeetingHistory(msgHistory.join("\n"), max_token);
             res.json({ message: response });
         } catch (error) {
