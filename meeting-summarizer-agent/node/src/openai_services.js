@@ -9,6 +9,8 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
+console.log("OpenAI API key loaded:", process.env.OPENAI_API_KEY);
+
 /**
  * Generates a completion based on the given prompt using OpenAI's GPT model.
  * 
