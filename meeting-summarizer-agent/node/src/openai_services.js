@@ -9,7 +9,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-console.log("OpenAI API key loaded:", process.env.OPENAI_API_KEY);
+
 
 /**
  * Generates a completion based on the given prompt using OpenAI's GPT model.
@@ -18,6 +18,7 @@ console.log("OpenAI API key loaded:", process.env.OPENAI_API_KEY);
  * @return {Promise<string>} The generated completion text.
  */
 export const completion = async (prompt, max_token) => {
+    console.log("open api key", openai.apiKey)
     const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         max_tokens: max_token,
@@ -33,12 +34,12 @@ export const completion = async (prompt, max_token) => {
  * @return {Promise<Object>} A stream of responses from the chat model.
  */
 export const completionStream = async (prompt, max_token) => {
+    console.log("open api key", openai.apiKey)
     const stream = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         max_tokens: max_token,
         messages: [{ role: "user", content: prompt }],
         stream: true,
-        stream_options: { include_usage: true },
         response_format: { type: 'text' }
     });
     return stream;
