@@ -9,8 +9,6 @@ The application exposes an endpoint that can accept queries related to food deli
 ## Prerequisites
 
 - Node.js (>= 18.0) installed on your machine
-- Access to a Supabase project
-- PDF files containing data relevant to your customer support needs
 
 ## Setup Instructions
 
