@@ -16,8 +16,7 @@ dotenv.config();
  */
 const buildFullPrompt = (context) => {
     // Define sections of the prompt for clarity and structure
-    const introBoilerplate = "Provide the summary as per the meeting context given below:";
-    const querySection = "USER QUERY: ";
+    const introBoilerplate = "Provide a concise summary based strictly on the meeting context given below. Do not add information outside of what is mentioned in the context, and keep the summary brief:";
     const contextSection = "CONTEXT: ";
     const answerSection = "Final Answer: ";
 

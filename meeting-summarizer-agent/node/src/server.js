@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { getMeetingHistory, getMeetingHistoryStream } from './prompt.js';
+import { getClarifiedQuestion } from './openai_services.js';
 
 
 // Load environment variables
@@ -30,15 +31,19 @@ function validateRequestData(req, res, next) {
 app.post('/mycustomagent/meetingSummary', async (req, res) => {
     const { messages, max_token = 1024 } = req.body;
     console.log('Received request with body:', req.body);
-    // const conversationContext = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
-    //console.log("conversational context till history =>", conversationContext);
     // since max history is of 10  then we need to store the last conversation;
-    const latestMsg = messages[messages.length - 1].content;
-    const isSummaryAsked = latestMsg.includes("summary");
+    const latestMsg = messages[messages.length - 1].role === 'user' ? messages[messages.length - 1].content : "";
+    const userWantsSummary = await getClarifiedQuestion(latestMsg, max_token);
+    console.log('user wants summary', userWantsSummary);
+    const isSummaryAsked = userWantsSummary.toLowerCase() === "yes";
     console.log('meeting history uptill now', msgHistoryStream.join(","));
     if (isSummaryAsked) {
         try {
-            const response = await getMeetingHistory(msgHistory.join("\n"), max_token);
+            if (msgHistory.length === 0) {
+                res.json({ message: "No Meeting Conversation found" });
+                return;
+            }
+            const response = await getMeetingHistory(msgHistory.join(";"), max_token);
             res.json({ message: response });
         } catch (error) {
             console.error('Error processing prompt:', error);
@@ -57,9 +62,11 @@ app.post('/mycustomagent/meetingSummaryStream', async (req, res) => {
     const { messages, max_token = 1024 } = req.body;
     console.log('Received stream request with body:', req.body);
     // since max history is of 10  then we need to store the last conversation;
-    const latestMsg = messages[messages.length - 1].content;
-    const isSummaryAsked = latestMsg.includes("summary");
-    console.log('meeting history uptill now', msgHistoryStream.join(","));
+    const latestMsg = messages[messages.length - 1].role === 'user' ? messages[messages.length - 1].content : "";
+    const userWantsSummary = await getClarifiedQuestion(latestMsg, max_token);
+    console.log('user wants summary', userWantsSummary);
+    const isSummaryAsked = userWantsSummary.toLowerCase() === "yes";
+
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -67,8 +74,13 @@ app.post('/mycustomagent/meetingSummaryStream', async (req, res) => {
     });
     if (isSummaryAsked) {
         try {
-
-            const stream = await getMeetingHistoryStream(msgHistoryStream.join("\n"), max_token);
+            if (msgHistoryStream.length === 0) {
+                res.write('data: {"message": "No Meeting Conversation found"}\n\n');
+                res.end('data: [DONE]\n\n');
+                return;
+            }
+            console.log('meeting history uptill now', msgHistoryStream.join(","));
+            const stream = await getMeetingHistoryStream(msgHistoryStream.join(";"), max_token);
             for await (const chunk of stream.iterator()) {
                 res.write(`data: ${JSON.stringify(chunk)}\n\n`);
             }
