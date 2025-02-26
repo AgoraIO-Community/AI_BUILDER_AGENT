@@ -4,7 +4,7 @@ This repository contains a Node.js application designed to handle meeting summar
 
 ## Overview
 
-The application exposes an endpoint that can accept queries related to food delivery options. It leverages custom data uploaded by users in PDF format, processes this data to create vector embeddings, and stores these embeddings in a Supabase database for quick retrieval and accurate response generation.
+The application exposes an endpoint that can accept user speech and generate a summary or minutes of a meeting. It uses OpenAI's GPT model to generate summaries based on user input and context from the conversations.
 
 ## Prerequisites
 
@@ -66,6 +66,14 @@ curl -X POST http://localhost:3000/mycustomagent/meetingSummaryStream -H 'Conten
     },
   ]
 }'
+```
+
+The response from above curl request will be as follows:
+
+```json
+{
+  "message": "In today's roundtable discussion, we are exploring the future of AI agents in technology. We began with introductions, starting with Alex, a data scientist focused on integrating AI into real-time decision-making systems."
+}
 ```
 
 This request format supports an interactive and context-aware communication flow, enhancing user experience by providing tailored responses based on the ongoing dialogue.
