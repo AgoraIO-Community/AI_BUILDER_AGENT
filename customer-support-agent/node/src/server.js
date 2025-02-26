@@ -23,10 +23,19 @@ function validateRequestData(req, res, next) {
 /**
  * Endpoint to handle POST requests, running a prompt based on the provided data.
  */
-app.post('/mycustomagent/prompt', validateRequestData, async (req, res) => {
-    const { data } = req.body;
+app.post('/mycustomagent/prompt', async (req, res) => {
+    const { messages, max_token = 1024 } = req.body;
+    console.log('Received request with body:', req.body);
+    const conversationContext = messages.map(msg => `${msg.role}: ${msg.content}`).join(',');
+    const LastMsgContext = messages.slice(-1)[0].content;
+    const clarifiedQuestion = await getClarifiedQuestion(LastMsgContext, conversationContext, max_token);
+    if (!clarifiedQuestion) {
+        res.status(500).json({ error: "Failed to clarify the user's query" });
+        return;
+    }
     try {
-        const response = await runPrompt(data);
+        console.log("User query clarified:", clarifiedQuestion);
+        const response = await runPrompt(clarifiedQuestion, max_token);
         res.json({ message: response });
     } catch (error) {
         console.error('Error processing prompt:', error);
@@ -40,9 +49,9 @@ app.post('/mycustomagent/prompt', validateRequestData, async (req, res) => {
 app.post('/mycustomagent/promptStream', async (req, res) => {
     const { messages, max_token = 1024 } = req.body;
     console.log('Received request with body:', req.body);
-    const conversationContext = messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
-
-    const clarifiedQuestion = await getClarifiedQuestion(conversationContext, max_token);
+    const conversationContext = messages.map(msg => `${msg.role}: ${msg.content}`).join(',');
+    const LastMsgContext = messages.slice(-1)[0].content;
+    const clarifiedQuestion = await getClarifiedQuestion(LastMsgContext, conversationContext, max_token);
     if (!clarifiedQuestion) {
         res.status(500).json({ error: "Failed to clarify the user's query" });
         return;

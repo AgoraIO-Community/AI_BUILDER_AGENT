@@ -64,7 +64,7 @@ export const fetchCustomDataPdf = async (slug) => {
  */
 const buildFullPrompt = (query, docsContext) => {
     // Define sections of the prompt for clarity and structure
-    const introBoilerplate = "Answer the question posed in the user query section using the provided context.";
+    const introBoilerplate = "Answer the question posted in the user query section using the provided context.";
     const querySection = "USER QUERY: ";
     const contextSection = "CONTEXT: ";
     const answerSection = "Final Answer: ";

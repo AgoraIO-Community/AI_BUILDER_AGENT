@@ -45,13 +45,11 @@ export const completion = async (prompt) => {
  * @param {string} conversationContext - The context of the conversation.
  * @return {Promise<string|null>} The clarified question or null if an error occurs.
  */
-export const getClarifiedQuestion = async (conversationContext, max_token) => {
+export const getClarifiedQuestion = async (lastMsgContext, conversationContext, max_token) => {
     try {
 
-        //const userContext = buildFullPrompt(` Please find out what is user's latest query or you can mention what user's conversation means by giving prefreces to last messages , it should be in one line`, conversationContext);
-        // const userContext = `Given the recent messages, what is the user's current intent or primary concern in their last message? Here is the conversation context:\n\n${conversationContext}`;
-        // const userContext = `Given the recent messages, what is the user's question or primary concern in their last message? Please provide the topic or subject of the query rather than the answer. Here is the conversation context:\n\n${conversationContext}`;
-        const userContext = `Given the recent messages, what is the user's primary concern or intent in their last message? Does it continue the discussion or indicate an end to the conversation , summarize it one line ? Here is the conversation context:\n\n${conversationContext}`;
+        // Combine lastMsgContext and conversationContext in the prompt with instruction to prioritize
+        const userContext = `Given the user's last message, try to identify their primary concern or intent from the last message context first. If the last message context alone is insufficient, consider the additional details provided by the broader conversation context. Here is the last message context:\n\n${lastMsgContext}\n\nIf more context is needed, here is the complete conversation context:\n\n${conversationContext}`;
         console.log("user clarification context =>", userContext)
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini",
