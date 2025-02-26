@@ -48,8 +48,7 @@ export const completion = async (prompt) => {
 export const getClarifiedQuestion = async (lastMsgContext, conversationContext, max_token) => {
     try {
 
-        // Combine lastMsgContext and conversationContext in the prompt with instruction to prioritize
-        const userContext = `Given the user's last message, try to identify their primary concern or intent from the last message context first. If the last message context alone is insufficient, consider the additional details provided by the broader conversation context. Here is the last message context:\n\n${lastMsgContext}\n\nIf more context is needed, here is the complete conversation context:\n\n${conversationContext}`;
+        const userContext = `Given the recent messages, what is the user's primary concern or intent in their last message? Does it continue the discussion or indicate an end to the conversation , summarize it one line ? Here is the conversation context:\n\n${lastMsgContext}`;
         console.log("user clarification context =>", userContext)
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini",
