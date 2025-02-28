@@ -27,6 +27,7 @@ If you are using a virtual environment, make sure it's activated before running 
 -For Unix or MacOS:
 
 ```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
